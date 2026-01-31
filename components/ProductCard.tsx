@@ -7,10 +7,19 @@ interface ProductCardProps {
   product: Product;
 }
 
+// Changed: Helper function to properly append imgix parameters
+function getOptimizedImageUrl(imageUrl: string | undefined, width: number, height: number): string {
+  const fallbackImage = 'https://images.unsplash.com/photo-1531722569936-825d3dd91b15';
+  const baseUrl = imageUrl || fallbackImage;
+  
+  // Remove any existing query parameters and add fresh ones
+  const cleanUrl = baseUrl.split('?')[0];
+  return `${cleanUrl}?w=${width}&h=${height}&fit=crop&auto=format,compress`;
+}
+
 export default function ProductCard({ product }: ProductCardProps) {
-  // Changed: Use image instead of featured_image to match the type definition
-  const imageUrl = product.metadata.image?.imgix_url || 
-    'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&h=800&fit=crop&auto=format,compress';
+  // Changed: Use helper function to get properly formatted image URL
+  const imageUrl = getOptimizedImageUrl(product.metadata.image?.imgix_url, 800, 800);
 
   // Changed: Added fallback for potentially undefined price
   const price = product.metadata.price ?? 0;
@@ -30,7 +39,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-ocean-50">
         <img
-          src={`${imageUrl}?w=800&h=800&fit=crop&auto=format,compress`}
+          src={imageUrl}
           alt={product.title}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           width={400}

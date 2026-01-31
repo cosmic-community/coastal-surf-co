@@ -40,6 +40,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+// Changed: Helper function to properly append imgix parameters
+function getOptimizedImageUrl(imageUrl: string | undefined, width: number, height: number): string {
+  const fallbackImage = 'https://images.unsplash.com/photo-1502680390469-be75c86b636f';
+  const baseUrl = imageUrl || fallbackImage;
+  
+  // Remove any existing query parameters and add fresh ones
+  const cleanUrl = baseUrl.split('?')[0];
+  return `${cleanUrl}?w=${width}&h=${height}&fit=crop&auto=format,compress`;
+}
+
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const [category, products, categories] = await Promise.all([
@@ -52,8 +62,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     notFound();
   }
 
-  const imageUrl = category.metadata.image?.imgix_url || 
-    'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=2000&auto=format,compress';
+  // Changed: Use helper function to get properly formatted image URL
+  const imageUrl = getOptimizedImageUrl(category.metadata.image?.imgix_url, 2000, 600);
 
   // Changed: Use title as fallback for name
   const categoryName = category.metadata.name || category.title;
@@ -63,7 +73,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       {/* Category Header */}
       <div className="relative h-64 md:h-80 overflow-hidden">
         <img
-          src={`${imageUrl}?w=2000&h=600&fit=crop&auto=format,compress`}
+          src={imageUrl}
           alt={categoryName}
           className="w-full h-full object-cover"
           width={2000}

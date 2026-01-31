@@ -5,6 +5,16 @@ interface CategoryShowcaseProps {
   categories: Category[];
 }
 
+// Changed: Helper function to properly append imgix parameters
+function getOptimizedImageUrl(imageUrl: string | undefined, width: number, height: number): string {
+  const fallbackImage = 'https://images.unsplash.com/photo-1502680390469-be75c86b636f';
+  const baseUrl = imageUrl || fallbackImage;
+  
+  // Remove any existing query parameters and add fresh ones
+  const cleanUrl = baseUrl.split('?')[0];
+  return `${cleanUrl}?w=${width}&h=${height}&fit=crop&auto=format,compress`;
+}
+
 export default function CategoryShowcase({ categories }: CategoryShowcaseProps) {
   if (categories.length === 0) {
     return null;
@@ -26,8 +36,8 @@ export default function CategoryShowcase({ categories }: CategoryShowcaseProps) 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {categories.map((category, index) => {
-            const imageUrl = category.metadata.image?.imgix_url || 
-              'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&h=600&fit=crop&auto=format,compress';
+            // Changed: Use helper function to get properly formatted image URL
+            const imageUrl = getOptimizedImageUrl(category.metadata.image?.imgix_url, 800, 600);
             
             // Changed: Use title as fallback for name
             const categoryName = category.metadata.name || category.title;
@@ -41,7 +51,7 @@ export default function CategoryShowcase({ categories }: CategoryShowcaseProps) 
               >
                 {/* Background Image */}
                 <img
-                  src={`${imageUrl}?w=800&h=600&fit=crop&auto=format,compress`}
+                  src={imageUrl}
                   alt={categoryName}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   width={400}
