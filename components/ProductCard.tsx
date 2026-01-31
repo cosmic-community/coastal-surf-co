@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Product } from '@/types';
 
@@ -12,6 +14,13 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   // Changed: Added fallback for potentially undefined price
   const price = product.metadata.price ?? 0;
+
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Add to cart logic here
+    console.log('Added to cart:', product.title);
+  };
 
   return (
     <Link
@@ -45,10 +54,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             ${price.toFixed(2)}
           </span>
           <button 
-            onClick={(e) => {
-              e.preventDefault();
-              // Add to cart logic here
-            }}
+            onClick={handleAddToCart}
             className="w-10 h-10 bg-ocean-100 hover:bg-ocean-600 text-ocean-600 hover:text-white rounded-full flex items-center justify-center transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
