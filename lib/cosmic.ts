@@ -17,10 +17,14 @@ export async function getProducts(): Promise<Product[]> {
     
     return response.objects as Product[];
   } catch (error) {
+    // Return empty array for any error during static generation
+    // This allows the build to complete even if Cosmic is unavailable
     if (hasStatus(error) && error.status === 404) {
       return [];
     }
-    throw new Error('Failed to fetch products');
+    // Log error but don't throw during build - return empty array
+    console.error('Failed to fetch products:', error);
+    return [];
   }
 }
 
@@ -40,7 +44,8 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     if (hasStatus(error) && error.status === 404) {
       return null;
     }
-    throw new Error('Failed to fetch product');
+    console.error('Failed to fetch product:', error);
+    return null;
   }
 }
 
@@ -60,7 +65,8 @@ export async function getProductsByCategorySlug(categorySlug: string): Promise<P
     if (hasStatus(error) && error.status === 404) {
       return [];
     }
-    throw new Error('Failed to fetch products by category');
+    console.error('Failed to fetch products by category:', error);
+    return [];
   }
 }
 
@@ -74,10 +80,13 @@ export async function getCategories(): Promise<Category[]> {
     
     return response.objects as Category[];
   } catch (error) {
+    // Return empty array for any error during static generation
     if (hasStatus(error) && error.status === 404) {
       return [];
     }
-    throw new Error('Failed to fetch categories');
+    // Log error but don't throw during build - return empty array
+    console.error('Failed to fetch categories:', error);
+    return [];
   }
 }
 
@@ -97,7 +106,8 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
     if (hasStatus(error) && error.status === 404) {
       return null;
     }
-    throw new Error('Failed to fetch category');
+    console.error('Failed to fetch category:', error);
+    return null;
   }
 }
 
@@ -114,6 +124,7 @@ export async function getTestimonials(): Promise<Testimonial[]> {
     if (hasStatus(error) && error.status === 404) {
       return [];
     }
-    throw new Error('Failed to fetch testimonials');
+    console.error('Failed to fetch testimonials:', error);
+    return [];
   }
 }

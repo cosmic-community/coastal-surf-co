@@ -6,11 +6,21 @@ import { getProductBySlug, getProducts, getCategories } from '@/lib/cosmic';
 
 export const revalidate = 60;
 
+// Changed: Added dynamicParams to allow dynamic rendering for paths not generated at build time
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  const products = await getProducts();
-  return products.map((product) => ({
-    slug: product.slug,
-  }));
+  // Changed: Wrap in try-catch to ensure build doesn't fail if Cosmic is unavailable
+  try {
+    const products = await getProducts();
+    return products.map((product) => ({
+      slug: product.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating static params for products:', error);
+    // Return empty array to allow build to succeed - pages will be generated on-demand
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {

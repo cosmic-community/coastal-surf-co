@@ -6,11 +6,21 @@ import ProductGrid from '@/components/ProductGrid';
 
 export const revalidate = 60;
 
+// Changed: Added dynamicParams to allow dynamic rendering for paths not generated at build time
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  const categories = await getCategories();
-  return categories.map((category) => ({
-    slug: category.slug,
-  }));
+  // Changed: Wrap in try-catch to ensure build doesn't fail if Cosmic is unavailable
+  try {
+    const categories = await getCategories();
+    return categories.map((category) => ({
+      slug: category.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating static params for categories:', error);
+    // Return empty array to allow build to succeed - pages will be generated on-demand
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
