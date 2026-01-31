@@ -28,6 +28,9 @@ export default function CategoryShowcase({ categories }: CategoryShowcaseProps) 
           {categories.map((category, index) => {
             const imageUrl = category.metadata.image?.imgix_url || 
               'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&h=600&fit=crop&auto=format,compress';
+            
+            // Changed: Use title as fallback for name
+            const categoryName = category.metadata.name || category.title;
 
             return (
               <Link
@@ -39,7 +42,7 @@ export default function CategoryShowcase({ categories }: CategoryShowcaseProps) 
                 {/* Background Image */}
                 <img
                   src={`${imageUrl}?w=800&h=600&fit=crop&auto=format,compress`}
-                  alt={category.metadata.name || category.title}
+                  alt={categoryName}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   width={400}
                   height={300}
@@ -51,7 +54,7 @@ export default function CategoryShowcase({ categories }: CategoryShowcaseProps) 
                 {/* Content */}
                 <div className="absolute inset-0 flex flex-col justify-end p-6">
                   <h3 className="text-2xl font-bold text-white mb-2">
-                    {category.metadata.name || category.title}
+                    {categoryName}
                   </h3>
                   {category.metadata.description && (
                     <p className="text-ocean-200 text-sm line-clamp-2 mb-4">

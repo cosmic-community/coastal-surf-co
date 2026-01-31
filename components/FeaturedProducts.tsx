@@ -8,8 +8,9 @@ interface FeaturedProductsProps {
 
 export default function FeaturedProducts({ products }: FeaturedProductsProps) {
   // Sort by price (highest first) and take top 4
+  // Changed: Added fallback for undefined price values
   const featuredProducts = [...products]
-    .sort((a, b) => b.metadata.price - a.metadata.price)
+    .sort((a, b) => (b.metadata.price ?? 0) - (a.metadata.price ?? 0))
     .slice(0, 4);
 
   if (featuredProducts.length === 0) {

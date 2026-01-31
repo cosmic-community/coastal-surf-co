@@ -31,8 +31,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return { title: 'Category Not Found' };
   }
   
+  // Changed: Use title as fallback for name
+  const categoryName = category.metadata.name || category.title;
+  
   return {
-    title: `${category.metadata.name || category.title} | Coastal Surf Co.`,
+    title: `${categoryName} | Coastal Surf Co.`,
     description: category.metadata.description || `Shop ${category.title} at Coastal Surf Co.`,
   };
 }
@@ -52,13 +55,16 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const imageUrl = category.metadata.image?.imgix_url || 
     'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=2000&auto=format,compress';
 
+  // Changed: Use title as fallback for name
+  const categoryName = category.metadata.name || category.title;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-ocean-50 to-sand-50">
       {/* Category Header */}
       <div className="relative h-64 md:h-80 overflow-hidden">
         <img
           src={`${imageUrl}?w=2000&h=600&fit=crop&auto=format,compress`}
-          alt={category.metadata.name || category.title}
+          alt={categoryName}
           className="w-full h-full object-cover"
           width={2000}
           height={600}
@@ -71,10 +77,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               <span>/</span>
               <Link href="/products" className="hover:text-white transition-colors">Products</Link>
               <span>/</span>
-              <span className="text-white">{category.metadata.name || category.title}</span>
+              <span className="text-white">{categoryName}</span>
             </nav>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              {category.metadata.name || category.title}
+              {categoryName}
             </h1>
             {category.metadata.description && (
               <p className="text-ocean-100 text-lg max-w-2xl">
@@ -102,6 +108,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                     : 'bg-white text-ocean-700 hover:bg-ocean-100 border border-ocean-200'
                 }`}
               >
+                {/* Changed: Use title as fallback for name */}
                 {cat.metadata.name || cat.title}
               </Link>
             ))}

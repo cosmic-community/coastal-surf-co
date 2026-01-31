@@ -33,6 +33,7 @@ export default function CategoryFilter({ categories, activeSlug }: CategoryFilte
                 : 'bg-white text-ocean-700 hover:bg-ocean-100 border border-ocean-200'
             }`}
           >
+            {/* Changed: Use title as fallback for name */}
             {category.metadata.name || category.title}
           </Link>
         ))}

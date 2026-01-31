@@ -9,8 +9,9 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
     return null;
   }
 
-  const renderStars = (rating: string) => {
-    const ratingNum = parseInt(rating, 10);
+  // Changed: Updated to accept number and handle undefined
+  const renderStars = (rating: number | undefined) => {
+    const ratingNum = rating ?? 5;
     return Array.from({ length: 5 }, (_, i) => (
       <svg
         key={i}
@@ -41,48 +42,55 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
 
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={testimonial.id}
-              className="bg-ocean-50 rounded-2xl p-6 animate-slide-up"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              {/* Stars */}
-              <div className="flex gap-1 mb-4">
-                {renderStars(testimonial.metadata.rating)}
-              </div>
+          {testimonials.map((testimonial, index) => {
+            // Changed: Support both naming conventions with fallbacks
+            const quote = testimonial.metadata.quote || testimonial.metadata.content || '';
+            const customerName = testimonial.metadata.customer_name || testimonial.metadata.author_name || 'Customer';
+            const photo = testimonial.metadata.photo || testimonial.metadata.author_image;
+            
+            return (
+              <div
+                key={testimonial.id}
+                className="bg-ocean-50 rounded-2xl p-6 animate-slide-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                {/* Stars */}
+                <div className="flex gap-1 mb-4">
+                  {renderStars(testimonial.metadata.rating)}
+                </div>
 
-              {/* Quote */}
-              <blockquote className="text-ocean-800 mb-6">
-                &ldquo;{testimonial.metadata.quote}&rdquo;
-              </blockquote>
+                {/* Quote */}
+                <blockquote className="text-ocean-800 mb-6">
+                  &ldquo;{quote}&rdquo;
+                </blockquote>
 
-              {/* Author */}
-              <div className="flex items-center gap-3">
-                {testimonial.metadata.photo ? (
-                  <img
-                    src={`${testimonial.metadata.photo.imgix_url}?w=96&h=96&fit=crop&auto=format,compress`}
-                    alt={testimonial.metadata.customer_name}
-                    className="w-12 h-12 rounded-full object-cover"
-                    width={48}
-                    height={48}
-                  />
-                ) : (
-                  <div className="w-12 h-12 rounded-full bg-ocean-200 flex items-center justify-center">
-                    <span className="text-ocean-600 font-semibold text-lg">
-                      {testimonial.metadata.customer_name.charAt(0)}
-                    </span>
+                {/* Author */}
+                <div className="flex items-center gap-3">
+                  {photo ? (
+                    <img
+                      src={`${photo.imgix_url}?w=96&h=96&fit=crop&auto=format,compress`}
+                      alt={customerName}
+                      className="w-12 h-12 rounded-full object-cover"
+                      width={48}
+                      height={48}
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-ocean-200 flex items-center justify-center">
+                      <span className="text-ocean-600 font-semibold text-lg">
+                        {customerName.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-semibold text-ocean-900">
+                      {customerName}
+                    </p>
+                    <p className="text-sm text-ocean-500">Verified Customer</p>
                   </div>
-                )}
-                <div>
-                  <p className="font-semibold text-ocean-900">
-                    {testimonial.metadata.customer_name}
-                  </p>
-                  <p className="text-sm text-ocean-500">Verified Customer</p>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

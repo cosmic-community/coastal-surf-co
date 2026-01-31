@@ -6,7 +6,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const imageUrl = product.metadata.featured_image?.imgix_url || 
+  // Changed: Use image instead of featured_image to match the type definition
+  const imageUrl = product.metadata.image?.imgix_url || 
     'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&h=800&fit=crop&auto=format,compress';
 
   // Changed: Added fallback for potentially undefined price

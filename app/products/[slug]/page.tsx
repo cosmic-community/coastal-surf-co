@@ -50,27 +50,27 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   }
 
   // Get category info
-  const categorySlug = typeof product.metadata.category === 'string' 
-    ? product.metadata.category 
-    : product.metadata.category?.slug;
+  const categorySlug = product.metadata.category;
   
   const category = categories.find(c => c.slug === categorySlug);
 
   // Get related products (same category, excluding current)
   const relatedProducts = products
     .filter(p => {
-      const pCatSlug = typeof p.metadata.category === 'string' 
-        ? p.metadata.category 
-        : p.metadata.category?.slug;
+      const pCatSlug = p.metadata.category;
       return pCatSlug === categorySlug && p.slug !== product.slug;
     })
     .slice(0, 3);
 
-  const imageUrl = product.metadata.featured_image?.imgix_url || 
+  // Changed: Use image instead of featured_image to match the type definition
+  const imageUrl = product.metadata.image?.imgix_url || 
     'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1200&h=800&fit=crop&auto=format,compress';
 
   // Changed: Added fallback for potentially undefined price
   const productPrice = product.metadata.price ?? 0;
+
+  // Changed: Get category name with fallback
+  const categoryName = category?.metadata.name || category?.title;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-ocean-50 to-sand-50">
@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   href={`/categories/${category.slug}`} 
                   className="text-ocean-600 hover:text-ocean-800 transition-colors"
                 >
-                  {category.metadata.name || category.title}
+                  {categoryName}
                 </Link>
               </>
             )}
@@ -118,7 +118,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             {category && (
               <div className="absolute top-4 left-4">
                 <span className="bg-ocean-600 text-white px-4 py-2 rounded-full text-sm font-medium">
-                  {category.metadata.name || category.title}
+                  {categoryName}
                 </span>
               </div>
             )}
@@ -202,6 +202,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               {relatedProducts.map((relatedProduct) => {
                 // Changed: Added fallback for potentially undefined price
                 const relatedPrice = relatedProduct.metadata.price ?? 0;
+                // Changed: Use image instead of featured_image
+                const relatedImageUrl = relatedProduct.metadata.image?.imgix_url || 'https://images.unsplash.com/photo-1502680390469-be75c86b636f';
                 return (
                   <Link
                     key={relatedProduct.id}
@@ -210,7 +212,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   >
                     <div className="aspect-square overflow-hidden">
                       <img
-                        src={`${relatedProduct.metadata.featured_image?.imgix_url || 'https://images.unsplash.com/photo-1502680390469-be75c86b636f'}?w=600&h=600&fit=crop&auto=format,compress`}
+                        src={`${relatedImageUrl}?w=600&h=600&fit=crop&auto=format,compress`}
                         alt={relatedProduct.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         width={300}
