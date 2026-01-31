@@ -6,7 +6,7 @@ import CosmicBadge from '@/components/CosmicBadge';
 
 export const metadata: Metadata = {
   title: 'Coastal Surf Co. | Premium Surfboards & Gear',
-  description: 'Shop premium surfboards, wetsuits, and accessories for surfers of all levels. Free shipping on orders over $100.',
+  description: 'Shop premium surfboards and gear for surfers of all levels. Free shipping on orders over $100.',
 };
 
 export default function RootLayout({
@@ -22,7 +22,8 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-        <script src="/dashboard-console-capture.js" />
+        {/* Console capture script for dashboard debugging - sends logs to parent window */}
+        <script src="/dashboard-console-capture.js"></script>
       </head>
       <body className="min-h-screen flex flex-col">
         <Header />
