@@ -40,14 +40,28 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-// Changed: Helper function to properly append imgix parameters
-function getOptimizedImageUrl(imageUrl: string | undefined, width: number, height: number): string {
-  const fallbackImage = 'https://images.unsplash.com/photo-1502680390469-be75c86b636f';
-  const baseUrl = imageUrl || fallbackImage;
+// Changed: Category-specific fallback images for better visual variety
+const categoryFallbackImages: Record<string, string> = {
+  'surfboards': 'https://images.unsplash.com/photo-1531722569936-825d3dd91b15?w=2000&h=600&fit=crop&auto=format,compress',
+  'wetsuits': 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=2000&h=600&fit=crop&auto=format,compress',
+  'accessories': 'https://images.unsplash.com/photo-1455264745730-cb3b76250ae8?w=2000&h=600&fit=crop&auto=format,compress',
+  'default': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=2000&h=600&fit=crop&auto=format,compress'
+};
+
+// Changed: Helper function to properly append imgix parameters with category-specific fallbacks
+function getOptimizedImageUrl(imageUrl: string | undefined, width: number, height: number, categorySlug?: string): string {
+  // If we have a valid image URL from Cosmic, use it
+  if (imageUrl) {
+    const cleanUrl = imageUrl.split('?')[0];
+    return `${cleanUrl}?w=${width}&h=${height}&fit=crop&auto=format,compress`;
+  }
   
-  // Remove any existing query parameters and add fresh ones
-  const cleanUrl = baseUrl.split('?')[0];
-  return `${cleanUrl}?w=${width}&h=${height}&fit=crop&auto=format,compress`;
+  // Otherwise use category-specific fallback or default
+  const fallback = categorySlug && categoryFallbackImages[categorySlug] 
+    ? categoryFallbackImages[categorySlug]
+    : categoryFallbackImages['default'];
+  
+  return fallback;
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -62,8 +76,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     notFound();
   }
 
-  // Changed: Use helper function to get properly formatted image URL
-  const imageUrl = getOptimizedImageUrl(category.metadata.image?.imgix_url, 2000, 600);
+  // Changed: Use helper function with category slug for appropriate fallback
+  const imageUrl = getOptimizedImageUrl(category.metadata.image?.imgix_url, 2000, 600, slug);
 
   // Changed: Use title as fallback for name
   const categoryName = category.metadata.name || category.title;
