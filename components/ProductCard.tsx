@@ -9,6 +9,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   const imageUrl = product.metadata.featured_image?.imgix_url || 
     'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800&h=800&fit=crop&auto=format,compress';
 
+  // Changed: Added fallback for potentially undefined price
+  const price = product.metadata.price ?? 0;
+
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -38,7 +41,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </h3>
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold text-ocean-600">
-            ${product.metadata.price.toFixed(2)}
+            ${price.toFixed(2)}
           </span>
           <button 
             onClick={(e) => {

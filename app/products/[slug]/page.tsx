@@ -69,6 +69,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const imageUrl = product.metadata.featured_image?.imgix_url || 
     'https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=1200&h=800&fit=crop&auto=format,compress';
 
+  // Changed: Added fallback for potentially undefined price
+  const productPrice = product.metadata.price ?? 0;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-ocean-50 to-sand-50">
       {/* Breadcrumb */}
@@ -129,7 +132,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             
             <div className="flex items-baseline gap-4 mb-6">
               <span className="text-4xl font-bold text-ocean-600">
-                ${product.metadata.price.toFixed(2)}
+                ${productPrice.toFixed(2)}
               </span>
               <span className="text-ocean-400 text-lg">USD</span>
             </div>
@@ -196,31 +199,35 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <div className="mt-20">
             <h2 className="text-2xl font-bold text-ocean-900 mb-8">You Might Also Like</h2>
             <div className="grid md:grid-cols-3 gap-8">
-              {relatedProducts.map((relatedProduct) => (
-                <Link
-                  key={relatedProduct.id}
-                  href={`/products/${relatedProduct.slug}`}
-                  className="group bg-white rounded-xl overflow-hidden shadow-md card-hover"
-                >
-                  <div className="aspect-square overflow-hidden">
-                    <img
-                      src={`${relatedProduct.metadata.featured_image?.imgix_url || 'https://images.unsplash.com/photo-1502680390469-be75c86b636f'}?w=600&h=600&fit=crop&auto=format,compress`}
-                      alt={relatedProduct.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      width={300}
-                      height={300}
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-ocean-900 group-hover:text-ocean-600 transition-colors">
-                      {relatedProduct.title}
-                    </h3>
-                    <p className="text-ocean-600 font-bold mt-1">
-                      ${relatedProduct.metadata.price.toFixed(2)}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+              {relatedProducts.map((relatedProduct) => {
+                // Changed: Added fallback for potentially undefined price
+                const relatedPrice = relatedProduct.metadata.price ?? 0;
+                return (
+                  <Link
+                    key={relatedProduct.id}
+                    href={`/products/${relatedProduct.slug}`}
+                    className="group bg-white rounded-xl overflow-hidden shadow-md card-hover"
+                  >
+                    <div className="aspect-square overflow-hidden">
+                      <img
+                        src={`${relatedProduct.metadata.featured_image?.imgix_url || 'https://images.unsplash.com/photo-1502680390469-be75c86b636f'}?w=600&h=600&fit=crop&auto=format,compress`}
+                        alt={relatedProduct.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        width={300}
+                        height={300}
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-ocean-900 group-hover:text-ocean-600 transition-colors">
+                        {relatedProduct.title}
+                      </h3>
+                      <p className="text-ocean-600 font-bold mt-1">
+                        ${relatedPrice.toFixed(2)}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}
