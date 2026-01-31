@@ -13,7 +13,7 @@ const categoryFallbackImages: Record<string, string> = {
   'default': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&auto=format,compress'
 };
 
-// Changed: Helper function to properly append imgix parameters with category-specific fallbacks
+// Changed: Fixed return type to always return string by ensuring fallback is never undefined
 function getOptimizedImageUrl(imageUrl: string | undefined, width: number, height: number, categorySlug?: string): string {
   // If we have a valid image URL from Cosmic, use it
   if (imageUrl) {
@@ -21,10 +21,10 @@ function getOptimizedImageUrl(imageUrl: string | undefined, width: number, heigh
     return `${cleanUrl}?w=${width}&h=${height}&fit=crop&auto=format,compress`;
   }
   
-  // Otherwise use category-specific fallback or default
-  const fallback = categorySlug && categoryFallbackImages[categorySlug] 
-    ? categoryFallbackImages[categorySlug]
-    : categoryFallbackImages['default'];
+  // Changed: Use nullish coalescing to ensure we always have a string fallback
+  // First try category-specific, then fall back to default (which always exists)
+  const categorySpecificFallback = categorySlug ? categoryFallbackImages[categorySlug] : undefined;
+  const fallback = categorySpecificFallback ?? categoryFallbackImages['default'] ?? 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=600&fit=crop&auto=format,compress';
   
   return fallback;
 }
